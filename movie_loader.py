@@ -27,9 +27,14 @@ print(len(total_movie_list))
 
 
 for movie in total_movie_list:
+      if movie['poster_path']:
+        movie['poster_path'] = 'https://image.tmdb.org/t/p/original' + movie['poster_path']
+      if movie['backdrop_path']:
+        movie['backdrop_path'] = 'https://image.tmdb.org/t/p/original' + movie['backdrop_path']
       single_movie_data = {"model":"movies.movie"}
       single_movie_data["fields"] = movie
       final_list.append(single_movie_data)
+      
 
 
 with open('movie_data.json', 'w', encoding='UTF-8') as f:
