@@ -1,3 +1,4 @@
+from math import radians
 from django.db.models import query
 from movies import serializers
 from movies.models import Movie, Genre
@@ -13,6 +14,7 @@ from django.contrib.auth import get_user_model
 from bs4 import BeautifulSoup
 from django.db.models import Q
 from collections import OrderedDict
+import random
 import itertools
 import weather
 
@@ -40,7 +42,9 @@ class MovieList(APIView):
         genre_movies=[]
         genres = Genre.objects.all()
         for genre in genres:
-            genre_movie_queryset = genre.movies.all()[:10]
+            genre_movie_queryset = genre.movies.all()
+            random_number = random.randint(0, len(genre_movie_queryset)-10)
+            genre_movie_queryset = genre_movie_queryset[random_number:random_number+10]
             genre_movie_serializer = MovieListSerializer(genre_movie_queryset, many=True)
             genre_movies.append({'genre':str(genre), 'movies':genre_movie_serializer.data})
         return Response(genre_movies)

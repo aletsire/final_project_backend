@@ -19,7 +19,7 @@ class MovieListSerializer(serializers.ModelSerializer):
   # class ReviewSerializer()
   class Meta:
     model = Movie
-    fields =('id', 'title', 'genre_ids', 'backdrop_path', 'poster_path', )
+    fields =('id', 'title', 'genre_ids', 'backdrop_path', 'poster_path','backdrop_path_thumbnail', 'poster_path_thumbnail', )
 
 
 class MovieSerializer(serializers.ModelSerializer):

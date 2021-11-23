@@ -1,9 +1,7 @@
 import sqlite3
 import requests
-import pprint
 import json
 
-pp = pprint.PrettyPrinter(indent=4)
 
 apiV3 = '5b8d80b80e618bfd8c5231c61e467b5b'
 
@@ -23,13 +21,13 @@ for page_number in range(1,101):
     total_movie_list += movie_list
 
 
-print(len(total_movie_list))
-
 
 for movie in total_movie_list:
       if movie['poster_path']:
+        movie['poster_path_thumbnail'] = 'https://image.tmdb.org/t/p/w200' + movie['poster_path']
         movie['poster_path'] = 'https://image.tmdb.org/t/p/original' + movie['poster_path']
       if movie['backdrop_path']:
+        movie['backdrop_path_thumbnail'] = 'https://image.tmdb.org/t/p/w500' + movie['backdrop_path']
         movie['backdrop_path'] = 'https://image.tmdb.org/t/p/original' + movie['backdrop_path']
       single_movie_data = {"model":"movies.movie"}
       single_movie_data["fields"] = movie
