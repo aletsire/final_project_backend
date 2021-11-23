@@ -27,8 +27,9 @@ class MovieList(APIView):
     #     genre_movie = []
     #     for genre in genres:
 
-    #         tmp = genre.movies.all().values()
+    #         tmp = genre.movies.all().values()[:10]
     #         print(tmp)
+    #         print()
     #         genre_movie.append({genre.genre_id: tmp})
 
     #     return Response(genre_movie)
@@ -41,7 +42,7 @@ class MovieList(APIView):
         for genre in genres:
             genre_movie_queryset = genre.movies.all()[:10]
             genre_movie_serializer = MovieListSerializer(genre_movie_queryset, many=True)
-            genre_movies.append({str(genre):genre_movie_serializer.data})
+            genre_movies.append({'genre':str(genre), 'movies':genre_movie_serializer.data})
         return Response(genre_movies)
 
 
@@ -54,7 +55,7 @@ class MovieRecommend(APIView):
         weather_icon = "http://openweathermap.org/img/wn/" + weather_json['weather'][0]['icon'] +".png"
         weather_data = {"weather_id":weather_id, "weather_description":weather_description, "weather_icon":weather_icon}
         genre_id = weather.get_genre(weather_id)
-        movies_queryset = Movie.objects.filter(genre_ids__in=[genre_id]).order_by('vote_average')[:3]
+        movies_queryset = Movie.objects.filter(genre_ids__in=[genre_id]).order_by('-vote_average')[:3]
         movies_serializer = MovieSerializer(movies_queryset, many=True)
         weather_data["recommend_movies"]= movies_serializer.data
         return Response(weather_data)

@@ -7,7 +7,7 @@ class Genre(models.Model):
     genre_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     def __str__(self):
-        return f'{self.pk}: {self.name}'
+        return f'{self.name}'
 
 class Movie(models.Model):
     adult = models.BooleanField(null=True)
