@@ -10,10 +10,11 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import filters
 from django.contrib.auth import get_user_model
-import random
+from bs4 import BeautifulSoup
 from django.db.models import Q
 from collections import OrderedDict
 import itertools
+import weather
 
 
 
@@ -43,12 +44,22 @@ class MovieList(APIView):
             genre_movies.append({str(genre):genre_movie_serializer.data})
         return Response(genre_movies)
 
-    # def post(self, request, format=None):
-    #     serializer = MovieSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save(owner=request.user)
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MovieRecommend(APIView):
+    def get(self, request, format=None):
+        weather_json = weather.get_weather()
+        weather_id = weather_json['weather'][0]['id']
+        #향후 도시 추가할 것
+        weather_description = weather_json['weather'][0]['description']
+        weather_icon = "http://openweathermap.org/img/wn/" + weather_json['weather'][0]['icon'] +".png"
+        weather_data = {"weather_id":weather_id, "weather_description":weather_description, "weather_icon":weather_icon}
+        genre_id = weather.get_genre(weather_id)
+        movies_queryset = Movie.objects.filter(genre_ids__in=[genre_id]).order_by('vote_average')[:3]
+        movies_serializer = MovieSerializer(movies_queryset, many=True)
+        weather_data["recommend_movies"]= movies_serializer.data
+        return Response(weather_data)
+        
+
 
 
 class MovieDetail(APIView):
@@ -93,29 +104,6 @@ class MovieDislike(APIView):
         return Response(serializer.data)
 
 
-    # def put(self, request, pk, format=None):
-    #     movie = self.get_object(pk)
-    #     # if request.
-    #     serializer = MovieSerializer(movie, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # def delete(self, request, pk, format=None):
-    #     snippet = self.get_object(pk)
-    #     snippet.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-
-# class MovieSearch(generics.ListCreateAPIView):
-#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    
-#     queryset = Movie.objects.all()
-#     serializer_class = MovieSerializer
-#     # print(queryset, serializer_class)
-#     filter_backends = [filters.SearchFilter]
-#     # print(filter_backends)
-#     search_fields = ['title', 'original_title', 'overview']
     
     
 class MovieSearch(generics.ListAPIView):
@@ -123,9 +111,7 @@ class MovieSearch(generics.ListAPIView):
     serializer_class = MovieSerializer
 
     def get_queryset(self):
-        print(self.request.GET['search'])
         q_word = self.request.GET['search']
-        print(q_word)
         if q_word:
 
             object_list = Movie.objects.filter(
@@ -139,13 +125,3 @@ class MovieSearch(generics.ListAPIView):
         return object_list
 
 
-
-
-# class UserList(generics.ListAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-
-# class UserDetail(generics.RetrieveAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
