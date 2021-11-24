@@ -59,7 +59,9 @@ class ReviewDetail(APIView):
 
     def delete(self, request, pk, format=None):
         review = self.get_object(pk)
-        if request.user == review.user:
+        print(review.user.id)
+        user = get_user_model().objects.get(pk=review.user.id)
+        if request.user == user:
             print(pk)
             Review.objects.get(pk=pk).delete()
             # comment.delete()
