@@ -60,7 +60,8 @@ class ReviewDetail(APIView):
     def delete(self, request, pk, format=None):
         review = self.get_object(pk)
         if request.user == review.user:
-            Review.objects.get(pk=request.data['id']).delete()
+            print(pk)
+            Review.objects.get(pk=pk).delete()
             # comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
