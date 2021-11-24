@@ -44,6 +44,28 @@ class ReviewDetail(APIView):
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
 
+    def put(self, request, pk, format=None):
+        
+        review = self.get_object(pk)
+  
+        serializer = ReviewSerializer(review, data=request.data)
+        if request.user == review.user:
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, pk, format=None):
+        review = self.get_object(pk)
+        if request.user == review.user:
+            Review.objects.get(pk=request.data['id']).delete()
+            # comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
 
 class ReviewClap(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]

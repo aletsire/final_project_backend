@@ -27,6 +27,8 @@ class ReviewListSerializer(serializers.ModelSerializer):
             fields = ('id', 'title')
 
     movie = MovieSerializer(read_only = True )
+    user = serializers.CharField(source = 'user.username', read_only=True)
+
     class Meta:        
         model = Review
         exclude = ('claps',)
@@ -43,7 +45,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class MovieSerializer(serializers.ModelSerializer):
         class Meta:
             model = Movie
-            fields = ('id', 'title')
+            fields = ('id', 'title', 'poster_path', 'backdrop_path')
 
 
     comments = CommentSerializer(many=True, read_only=True)
