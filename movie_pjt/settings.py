@@ -41,8 +41,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '15.164.229.252',
-    'https://stoic-chandrasekhar-7808d6.netlify.app/'
+    '*'
 ]
 
 
@@ -54,6 +53,7 @@ INSTALLED_APPS = [
     'community',
     'rest_framework',
     'corsheaders',
+    'sslserver',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
