@@ -84,13 +84,17 @@ class MovieDetail(APIView):
 class MovieLike(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     def post(self, request, pk):
+        print('user')
+        print(request.user.pk)
         movie = generics.get_object_or_404(Movie, pk = pk)
         if movie.like_users.filter(pk=request.user.pk).exists():
             movie.like_users.remove(request.user)
+            print(request.user)
         else:
             if movie.dislike_users.filter(pk=request.user.pk).exists():
                 movie.dislike_users.remove(request.user)
             movie.like_users.add(request.user)
+        print(request.user)
         serializer = MovieSerializer(movie)
         return Response(serializer.data)
 
@@ -99,6 +103,8 @@ class MovieDislike(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     def post(self, request, pk):
         movie = generics.get_object_or_404(Movie, pk = pk)
+        print('user')
+        print(request)
         if movie.dislike_users.filter(pk=request.user.pk).exists():
             movie.dislike_users.remove(request.user)
         else:
@@ -121,9 +127,7 @@ class MovieSearch(generics.ListAPIView):
 
             object_list = Movie.objects.filter(
                 Q(title__icontains=q_word) |
-                Q(genre_ids__name__icontains=q_word) |
-                Q(original_title__icontains=q_word) |
-                Q(overview__icontains=q_word)
+                Q(original_title__icontains=q_word)
             )
         else:
             object_list = Movie.objects.all()
