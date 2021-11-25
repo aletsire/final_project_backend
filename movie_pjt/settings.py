@@ -40,7 +40,10 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    '15.164.229.252',
+    'https://stoic-chandrasekhar-7808d6.netlify.app/'
+]
 
 
 # Application definition

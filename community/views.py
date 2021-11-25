@@ -88,33 +88,17 @@ class ReviewClap(APIView):
 
 class CommentList(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    # def get_object(self, pk):
-    #     try:
-    #         return Comment.objects.get(pk=pk)
-    #     except Comment.DoesNotExist:
-    #         raise Http404
-
-    # def get(self, request, pk, format=None):
-    #     comment = self.get_object(pk=pk)
-    #     serializer = CommentSerializer(comment)
-    #     return Response(serializer.data)
 
     def post(self, request, pk, format=None):
         serializer = CommentSerializer(data=request.data)
-        # print(pk)
         if serializer.is_valid():
             serializer.save(user=request.user, review = Review.objects.get(pk=pk))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
-        
-        # queryset = self.get_queryset()
-        # serializer_class = CommentSerializer(queryset)
         print(request.data['id'])
         comment = generics.get_object_or_404(Comment, pk = request.data['id'])
-        # print(comment.pk)
-        # print(request.user)
         serializer = CommentSerializer(comment, data=request.data)
         if request.user == comment.user:
             if serializer.is_valid():
@@ -150,7 +134,6 @@ class CommentList(APIView):
 
 
 class ReviewSearch(generics.ListAPIView):
-    # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
     def get_queryset(self):
