@@ -129,8 +129,7 @@ class MovieSearch(generics.ListAPIView):
                 Q(title__icontains=q_word) |
                 Q(original_title__icontains=q_word)
             )
-        else:
-            object_list = Movie.objects.all()
-        return object_list
+            return object_list
+
 
 
